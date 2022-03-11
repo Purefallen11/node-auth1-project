@@ -1,3 +1,4 @@
+
 /*
   If the user does not have a session saved in the server
 
@@ -19,6 +20,7 @@ function restricted() {
   }
 */
 function checkUsernameFree() {
+  
 
 }
 
@@ -30,8 +32,12 @@ function checkUsernameFree() {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists() {
-
+function checkUsernameExists(req,res,next) {
+  if (!req.body.username || !req.body.password) {
+  res.status(401).json({message: 'Invalid credentials'})
+  } else {
+    next()
+}
 }
 
 /*

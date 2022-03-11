@@ -18,7 +18,7 @@ return db('users').where(filter)
   resolves to the user { user_id, username } with the given user_id
  */
 function findById(user_id) {
-return db('users').where(user_id).first()
+return db('users').where({user_id}).first()
 }
 
 /**
@@ -33,5 +33,7 @@ async function add(user) {
 // Don't forget to add these to the `exports` object so they can be required in other modules
 module.exports = {
   find,
-  add
+  findBy,
+  add,
+  findById
 }
