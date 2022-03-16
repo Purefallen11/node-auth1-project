@@ -60,12 +60,38 @@
  */
 
 
-// Don't forget to add the router to the `exports` object so it can be required in other modules
 const express = require('express')
 const router = express.Router()
+const { checkPasswordLength, checkUsernameExists, checkUsernameFree } = require('./auth-middleware')
+const User = require('../users/users-model')
+const bcrypt = require('bcryptjs')
 
+router.post('/register', (req, res) => {
+  const { username, password } = req.body
+  
+  /**
+  1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
 
-router.post('/register', (req, res) => {})
+  response:
+  status 200
+  {
+    "user_id": 2,
+    "username": "sue"
+  }
+
+  response on username taken:
+  status 422
+  {
+    "message": "Username taken"
+  }
+
+  response on password three chars or less:
+  status 422
+  {
+    "message": "Password must be longer than 3 chars"
+  }
+ */
+})
 router.post('/login', (req, res) => {console.log('login')})
 router.get('/logout', (req, res) => {})
 
