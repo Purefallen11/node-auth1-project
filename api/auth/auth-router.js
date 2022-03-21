@@ -3,30 +3,6 @@
 
 
 /**
-  1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
-
-  response:
-  status 200
-  {
-    "user_id": 2,
-    "username": "sue"
-  }
-
-  response on username taken:
-  status 422
-  {
-    "message": "Username taken"
-  }
-
-  response on password three chars or less:
-  status 422
-  {
-    "message": "Password must be longer than 3 chars"
-  }
- */
-
-
-/**
   2 [POST] /api/auth/login { "username": "sue", "password": "1234" }
 
   response:
@@ -66,33 +42,33 @@ const { checkPasswordLength, checkUsernameExists, checkUsernameFree } = require(
 const User = require('../users/users-model')
 const bcrypt = require('bcryptjs')
 
-router.post('/register', (req, res) => {
+
+
+router.post('/register', checkPasswordLength, checkUsernameFree, async (req, res, next) => {
+  try {
+    const { username, password } = req.body
+    const hash = bcrypt.hashSync(password, 10)
+
+    const newUser = await User.add({ username: username, password: hash })
+    res.status(201).json(newUser)
+  }
+  catch (err) {
+    next(err)
+  }
+})
+
+
+router.post('/login',checkUsernameExists, (req, res) => {
   const { username, password } = req.body
   
-  /**
-  1 [POST] /api/auth/register { "username": "sue", "password": "1234" }
-
-  response:
-  status 200
-  {
-    "user_id": 2,
-    "username": "sue"
+  if (bcrypt.compareSync(password, req.user.password)) {
+    req.session.user = req.user
+    res.status(200).json({message: `welcome ${username}`})
+  } else {
+    res.status(401).json({message: 'invalid credentials'})
   }
-
-  response on username taken:
-  status 422
-  {
-    "message": "Username taken"
-  }
-
-  response on password three chars or less:
-  status 422
-  {
-    "message": "Password must be longer than 3 chars"
-  }
- */
 })
-router.post('/login', (req, res) => {console.log('login')})
+
 router.get('/logout', (req, res) => {})
 
 

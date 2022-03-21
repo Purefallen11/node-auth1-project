@@ -45,11 +45,17 @@ async function checkUsernameFree(req,res,next) {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists(req,res,next) {
-  if (!req.body.username || !req.body.password) {
-  res.status(401).json({message: 'Invalid credentials'})
-  } else {
-    next()
+async function checkUsernameExists(req,res,next) {
+  try {
+    const rows = await UsersModel.findBy({ username: req.body.username })
+    if (rows.length) {
+      req.userData = rows[0]
+      next()
+    } else {
+      res.status(401).json({message: 'invalid credentials'})
+    }
+  } catch (err) {
+    next(err)
 }
 }
 
